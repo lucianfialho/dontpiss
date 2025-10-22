@@ -8,6 +8,7 @@ import subprocess
 import os
 import random
 import time
+import platform
 from pathlib import Path
 
 
@@ -54,30 +55,39 @@ class DogTrainer:
         self.sounds_dir.mkdir(exist_ok=True)
 
     def play_beep(self, duration=0.3, frequency=800):
-        """Play beep sound (macOS)"""
+        """Play beep sound (cross-platform)"""
         try:
-            # macOS beep
-            for _ in range(int(duration * 10)):
-                os.system('afplay /System/Library/Sounds/Funk.aiff')
-                time.sleep(0.05)
+            if platform.system() == 'Darwin':  # macOS
+                os.system('afplay /System/Library/Sounds/Funk.aiff &')
+            elif platform.system() == 'Windows':
+                # Windows beep using winsound
+                import winsound
+                winsound.Beep(int(frequency), int(duration * 1000))
+            else:  # Linux
+                os.system(f'beep -f {frequency} -l {int(duration * 1000)} &')
         except Exception as e:
-            print(f"Could not play beep: {e}")
+            # Fallback: just print (silent mode)
+            pass
 
     def play_buzzer(self):
         """Play annoying buzzer sound"""
         try:
-            # Play funk sound multiple times for buzzer effect
-            os.system('afplay /System/Library/Sounds/Sosumi.aiff')
+            if platform.system() == 'Darwin':  # macOS
+                os.system('afplay /System/Library/Sounds/Sosumi.aiff &')
+            elif platform.system() == 'Windows':
+                import winsound
+                # Play sequence of annoying beeps
+                for _ in range(3):
+                    winsound.Beep(1000, 200)
+                    time.sleep(0.1)
+            else:  # Linux
+                os.system('beep -f 1000 -l 200 -r 3 &')
         except:
             pass
 
     def play_voice_command(self, command="No"):
-        """Play voice command using macOS text-to-speech"""
+        """Play voice command using text-to-speech (cross-platform)"""
         try:
-            # Use macOS 'say' command
-            voice = "Samantha"  # Female voice
-            rate = 200  # Fast speech
-
             commands = {
                 "No": ["No!", "Off!", "Down!", "Get down!"],
                 "Warning": ["Don't even think about it!", "I'm watching you!"],
@@ -85,10 +95,22 @@ class DogTrainer:
             }
 
             message = random.choice(commands.get(command, ["No!"]))
-            subprocess.run(['say', '-v', voice, '-r', str(rate), message],
-                         check=False)
+
+            if platform.system() == 'Darwin':  # macOS
+                subprocess.Popen(['say', '-v', 'Samantha', '-r', '200', message],
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            elif platform.system() == 'Windows':
+                # Use PowerShell's text-to-speech (non-blocking)
+                ps_command = f'Add-Type -AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak("{message}")'
+                subprocess.Popen(['powershell', '-Command', ps_command],
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                               creationflags=subprocess.CREATE_NO_WINDOW if platform.system() == 'Windows' else 0)
+            else:  # Linux
+                subprocess.Popen(['espeak', message],
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except Exception as e:
-            print(f"Could not play voice: {e}")
+            # Silent fallback
+            pass
 
     def play_ultrasonic_simulation(self):
         """
@@ -96,10 +118,18 @@ class DogTrainer:
         (Dogs hear higher frequencies than humans)
         """
         try:
-            # Play multiple quick beeps
-            for _ in range(3):
-                os.system('afplay /System/Library/Sounds/Tink.aiff')
-                time.sleep(0.1)
+            if platform.system() == 'Darwin':  # macOS
+                for _ in range(3):
+                    os.system('afplay /System/Library/Sounds/Tink.aiff &')
+                    time.sleep(0.1)
+            elif platform.system() == 'Windows':
+                import winsound
+                # Play high-frequency beeps
+                for _ in range(3):
+                    winsound.Beep(3000, 100)  # High pitch
+                    time.sleep(0.1)
+            else:  # Linux
+                os.system('beep -f 3000 -l 100 -r 3 &')
         except:
             pass
 

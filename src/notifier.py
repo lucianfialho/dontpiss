@@ -45,12 +45,12 @@ class Notifier:
             system = platform.system()
 
             if system == 'Darwin':  # macOS
-                os.system('afplay /System/Library/Sounds/Glass.aiff')
+                os.system('afplay /System/Library/Sounds/Glass.aiff &')
             elif system == 'Linux':
-                os.system('paplay /usr/share/sounds/freedesktop/stereo/bell.oga')
+                os.system('paplay /usr/share/sounds/freedesktop/stereo/bell.oga &')
             elif system == 'Windows':
                 import winsound
-                winsound.MessageBeep()
+                winsound.MessageBeep(winsound.MB_ICONEXCLAMATION)
         except Exception as e:
             logger.warning(f"Could not play sound: {e}")
 

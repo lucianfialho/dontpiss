@@ -2,10 +2,21 @@
 
 **Skip Docker on Windows - use native Python instead.**
 
-## 1. Install Python 3.11
+## 1. Check Python Version
 
 ```powershell
-# Download and install Python 3.11
+# Check your Python version
+python --version
+```
+
+**You need Python 3.9, 3.10, or 3.11** (NOT 3.12, 3.13, or 3.14)
+
+If you have Python 3.12+:
+```powershell
+# Install Python 3.11 from Microsoft Store
+winget install Python.Python.3.11
+
+# Or download from:
 # https://www.python.org/downloads/release/python-3110/
 # ✅ CHECK "Add Python to PATH" during installation
 ```
@@ -16,15 +27,17 @@
 # Open PowerShell in the project folder
 cd C:\Users\Arklok\dontpiss
 
-# Create virtual environment
+# Create virtual environment with Python 3.11
+py -3.11 -m venv venv
+# Or if only one Python installed:
 python -m venv venv
 
 # Activate it
 venv\Scripts\activate
 
-# Install dependencies
+# Install dependencies (use Windows-specific requirements)
 pip install --upgrade pip
-pip install -r requirements-minimal.txt
+pip install -r requirements-windows.txt
 ```
 
 ## 3. Configure Zone
@@ -75,7 +88,24 @@ python zone_detector.py --camera 1
 venv\Scripts\activate
 
 # Reinstall
-pip install -r requirements-minimal.txt
+pip install -r requirements-windows.txt
+```
+
+### "numpy build failed" or "compiler not found"
+
+You have Python 3.12+ which needs compilation. **Install Python 3.11 instead:**
+
+```powershell
+# Remove old venv
+Remove-Item -Recurse -Force venv
+
+# Install Python 3.11
+winget install Python.Python.3.11
+
+# Create new venv with 3.11
+py -3.11 -m venv venv
+venv\Scripts\activate
+pip install -r requirements-windows.txt
 ```
 
 ---

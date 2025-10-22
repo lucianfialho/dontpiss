@@ -113,8 +113,28 @@ def main():
     try:
         import cv2
         import numpy
+        print("   ✓ OpenCV and NumPy installed")
+    except ImportError as e:
+        print(f"   ✗ Missing dependency: {e}")
+        print("\n   Please run: pip install -r requirements-windows.txt")
+        return 1
+
+    # Check PyTorch separately (common DLL issues on Windows)
+    try:
         from ultralytics import YOLO
-        print("   ✓ All dependencies installed")
+        print("   ✓ Ultralytics YOLO installed")
+    except OSError as e:
+        if "DLL" in str(e) or "1114" in str(e):
+            print(f"   ✗ PyTorch DLL error (missing Visual C++ Redistributable)")
+            print("\n   Fix:")
+            print("   1. Install Visual C++ Redistributable:")
+            print("      winget install Microsoft.VCRedist.2015+.x64")
+            print("\n   Or download manually:")
+            print("      https://aka.ms/vs/17/release/vc_redist.x64.exe")
+            print("\n   2. Restart PowerShell and run setup_wizard.py again")
+            return 1
+        else:
+            raise
     except ImportError as e:
         print(f"   ✗ Missing dependency: {e}")
         print("\n   Please run: pip install -r requirements-windows.txt")

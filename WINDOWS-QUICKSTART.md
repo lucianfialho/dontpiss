@@ -5,9 +5,11 @@
 ## Option 1: Setup Wizard (Easiest) ⭐
 
 ```powershell
-# 1. Install Python
+# 1. Install Python and Visual C++ Redistributable
 python --version  # Check if installed
-# If not: winget install Python.Python.3.12
+# If not:
+winget install Python.Python.3.12
+winget install Microsoft.VCRedist.2015+.x64
 
 # 2. Clone and setup
 git clone https://github.com/lucianfialho/dontpiss.git
@@ -141,6 +143,20 @@ pip install ultralytics
 If still fails, you can skip analytics and use core only:
 ```powershell
 pip install opencv-python numpy ultralytics pillow plyer
+```
+
+### "DLL load failed" or "Error 1114"
+
+PyTorch needs Visual C++ Redistributable on Windows:
+
+```powershell
+# Install VC++ Redistributable
+winget install Microsoft.VCRedist.2015+.x64
+
+# Or download manually:
+# https://aka.ms/vs/17/release/vc_redist.x64.exe
+
+# After installing, restart PowerShell
 ```
 
 ---

@@ -24,7 +24,15 @@ user_config.json
 data/
 logs/
 analytics/
-sounds/
+
+# Sounds - Keep custom alerts but ignore other sound files
+sounds/*.mp3
+sounds/*.ogg
+sounds/*.aac
+# Allow custom alert WAV files
+!sounds/alert_*.wav
+!sounds/good_dog.wav
+!sounds/.gitkeep
 
 # Models
 models/

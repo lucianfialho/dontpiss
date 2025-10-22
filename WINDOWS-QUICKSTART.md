@@ -2,42 +2,48 @@
 
 **Skip Docker on Windows - use native Python instead.**
 
-## 1. Check Python Version
+## 1. Install Python
 
 ```powershell
-# Check your Python version
+# Check if you have Python
 python --version
 ```
 
-**You need Python 3.9, 3.10, or 3.11** (NOT 3.12, 3.13, or 3.14)
-
-If you have Python 3.12+:
+If not installed or too old:
 ```powershell
-# Install Python 3.11 from Microsoft Store
-winget install Python.Python.3.11
+# Install latest Python from Microsoft Store (easiest)
+winget install Python.Python.3.12
 
-# Or download from:
-# https://www.python.org/downloads/release/python-3110/
+# Or download from python.org
 # ✅ CHECK "Add Python to PATH" during installation
 ```
 
 ## 2. Setup Project
 
 ```powershell
-# Open PowerShell in the project folder
-cd C:\Users\Arklok\dontpiss
+# Open PowerShell
 
-# Create virtual environment with Python 3.11
-py -3.11 -m venv venv
-# Or if only one Python installed:
+# Clone repository (if you don't have it)
+git clone https://github.com/lucianfialho/dontpiss.git
+cd dontpiss
+
+# Or just navigate to it
+cd C:\Users\SEU_USUARIO\dontpiss
+
+# Create virtual environment
 python -m venv venv
 
 # Activate it
 venv\Scripts\activate
 
-# Install dependencies (use Windows-specific requirements)
+# Install dependencies
 pip install --upgrade pip
 pip install -r requirements-windows.txt
+```
+
+**Note:** If numpy installation fails, try:
+```powershell
+pip install numpy --only-binary :all:
 ```
 
 ## 3. Configure Zone
@@ -93,19 +99,18 @@ pip install -r requirements-windows.txt
 
 ### "numpy build failed" or "compiler not found"
 
-You have Python 3.12+ which needs compilation. **Install Python 3.11 instead:**
+Try installing pre-built wheel only:
 
 ```powershell
-# Remove old venv
-Remove-Item -Recurse -Force venv
+# Use only pre-built binaries (no compilation)
+pip install numpy --only-binary :all:
+pip install opencv-python --only-binary :all:
+pip install ultralytics
+```
 
-# Install Python 3.11
-winget install Python.Python.3.11
-
-# Create new venv with 3.11
-py -3.11 -m venv venv
-venv\Scripts\activate
-pip install -r requirements-windows.txt
+If still fails, you can skip analytics and use core only:
+```powershell
+pip install opencv-python numpy ultralytics pillow plyer
 ```
 
 ---

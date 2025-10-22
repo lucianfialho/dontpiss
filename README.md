@@ -21,22 +21,55 @@ DontPiss is an AI-powered dog training system that uses computer vision to detec
 
 ## 🚀 Quick Start
 
-### 1. Install Dependencies
+### ⭐ Recommended: Docker (Easiest)
+
+No Python setup needed! Works on any machine.
+
+```bash
+# 1. Install Docker Desktop
+# Download from https://www.docker.com/products/docker-desktop
+
+# 2. Clone repository
+git clone https://github.com/lucianfialho/dontpiss.git
+cd dontpiss
+
+# 3. Setup forbidden zone
+docker-compose --profile setup run --rm zone-setup
+
+# 4. Start training
+docker-compose up -d
+
+# 5. View logs
+docker-compose logs -f
+```
+
+**📖 See [DOCKER.md](DOCKER.md) for complete guide (Windows, macOS, Linux).**
+
+---
+
+### Alternative: Manual Python Installation
+
+<details>
+<summary>Click to expand manual installation instructions</summary>
+
+#### 1. Install Dependencies
 
 ```bash
 # Clone repository
-git clone https://github.com/YOUR_USERNAME/dontpiss.git
+git clone https://github.com/lucianfialho/dontpiss.git
 cd dontpiss
 
-# Create virtual environment
-python3 -m venv venv
+# Create virtual environment (Python 3.9-3.11 required)
+python3.11 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install requirements
-pip install -r requirements.txt
+pip install -r requirements-minimal.txt
 ```
 
-### 2. Configure Forbidden Zone
+**📖 See [INSTALL.md](INSTALL.md) for troubleshooting.**
+
+#### 2. Configure Forbidden Zone
 
 ```bash
 # Run quick setup to draw zone on your sofa
@@ -48,12 +81,14 @@ python quick_zone_setup.py
 - Press 'S' to save
 - Done!
 
-### 3. Start Training
+#### 3. Start Training
 
 ```bash
 cd src
 python zone_detector.py --mode standard
 ```
+
+</details>
 
 That's it! The system will now:
 - Detect when your dog jumps on the sofa
@@ -184,6 +219,8 @@ dontpiss/
 
 ## 📖 Documentation
 
+- [🐳 Docker Guide](DOCKER.md) - **Recommended setup** (Windows, macOS, Linux)
+- [🔧 Installation Guide](INSTALL.md) - Manual Python installation and troubleshooting
 - [🚫 Zone Detection Guide](README_ZONE.md) - How zone detection works
 - [🎓 Training Guide](README_TRAINING.md) - Complete training strategies
 - [📊 Analytics Guide](README_ANALYTICS.md) - Understanding your data

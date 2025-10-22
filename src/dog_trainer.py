@@ -54,8 +54,46 @@ class DogTrainer:
         self.sounds_dir = Path(__file__).parent.parent / 'sounds'
         self.sounds_dir.mkdir(exist_ok=True)
 
+        # Check for custom audio files
+        self.custom_audio = {
+            'alert_soft': self.sounds_dir / 'alert_soft.wav',
+            'alert_medium': self.sounds_dir / 'alert_medium.wav',
+            'alert_strong': self.sounds_dir / 'alert_strong.wav',
+            'good_dog': self.sounds_dir / 'good_dog.wav'
+        }
+
+        # Check which custom files exist
+        self.has_custom_audio = any(f.exists() for f in self.custom_audio.values())
+
+    def play_audio_file(self, filepath):
+        """Play custom audio file (cross-platform)"""
+        try:
+            if not Path(filepath).exists():
+                return False
+
+            if platform.system() == 'Darwin':  # macOS
+                subprocess.Popen(['afplay', str(filepath)],
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            elif platform.system() == 'Windows':
+                # Use Windows Media Player command line
+                subprocess.Popen(['powershell', '-c', f'(New-Object Media.SoundPlayer "{filepath}").PlaySync()'],
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                               creationflags=subprocess.CREATE_NO_WINDOW)
+            else:  # Linux
+                subprocess.Popen(['aplay', str(filepath)],
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            return True
+        except:
+            return False
+
     def play_beep(self, duration=0.3, frequency=800):
-        """Play beep sound (cross-platform)"""
+        """Play beep sound (cross-platform) - uses custom audio if available"""
+        # Try custom audio first
+        if self.custom_audio['alert_soft'].exists():
+            if self.play_audio_file(self.custom_audio['alert_soft']):
+                return
+
+        # Fallback to system beep
         try:
             if platform.system() == 'Darwin':  # macOS
                 os.system('afplay /System/Library/Sounds/Funk.aiff &')
@@ -70,7 +108,13 @@ class DogTrainer:
             pass
 
     def play_buzzer(self):
-        """Play annoying buzzer sound"""
+        """Play annoying buzzer sound - uses custom audio if available"""
+        # Try custom audio first
+        if self.custom_audio['alert_strong'].exists():
+            if self.play_audio_file(self.custom_audio['alert_strong']):
+                return
+
+        # Fallback to system buzzer
         try:
             if platform.system() == 'Darwin':  # macOS
                 os.system('afplay /System/Library/Sounds/Sosumi.aiff &')
@@ -86,7 +130,19 @@ class DogTrainer:
             pass
 
     def play_voice_command(self, command="No"):
-        """Play voice command using text-to-speech (cross-platform)"""
+        """Play voice command - uses custom audio if available, fallback to TTS"""
+        # Try custom audio first based on command type
+        if command == "Good":
+            if self.custom_audio['good_dog'].exists():
+                if self.play_audio_file(self.custom_audio['good_dog']):
+                    return
+        else:
+            # For warning commands, use medium alert
+            if self.custom_audio['alert_medium'].exists():
+                if self.play_audio_file(self.custom_audio['alert_medium']):
+                    return
+
+        # Fallback to text-to-speech
         try:
             commands = {
                 "No": ["No!", "Off!", "Down!", "Get down!"],

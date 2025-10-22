@@ -23,21 +23,25 @@ DontPiss is an AI-powered dog training system that uses computer vision to detec
 
 ### Windows Users 🪟
 
-**Use native Python (Docker has camera issues on Windows):**
+**Easiest: Setup Wizard (Recommended)**
 
 ```powershell
-# 1. Install Python 3.11 from python.org (check "Add to PATH")
+# 1. Install Python from python.org (check "Add to PATH")
 # 2. Clone and setup
 git clone https://github.com/lucianfialho/dontpiss.git
 cd dontpiss
 python -m venv venv
 venv\Scripts\activate
-pip install -r requirements-minimal.txt
+pip install -r requirements-windows.txt
 
-# 3. Setup zone
+# 3. Run setup wizard (does everything for you!)
+python setup_wizard.py
+```
+
+**Manual setup:**
+```powershell
+# If you prefer to configure manually
 python quick_zone_setup.py
-
-# 4. Start training
 cd src
 python zone_detector.py --mode standard
 ```

@@ -12,10 +12,13 @@ ENV/
 dist/
 build/
 
-# User configuration (camera settings, zones)
+# User configuration (camera settings)
 user_config.json
-zone_config.json
-src/zone_config.json
+
+# Zone configuration - REMOVED FROM IGNORE
+# You can now commit your zone configs to share across machines
+# zone_config.json
+# src/zone_config.json
 
 # Data and outputs
 data/

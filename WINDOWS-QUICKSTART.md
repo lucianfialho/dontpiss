@@ -1,6 +1,36 @@
-# 🪟 Windows Quick Start (5 minutes)
+# 🪟 Windows Quick Start (3 minutes)
 
 **Skip Docker on Windows - use native Python instead.**
+
+## Option 1: Setup Wizard (Easiest) ⭐
+
+```powershell
+# 1. Install Python
+python --version  # Check if installed
+# If not: winget install Python.Python.3.12
+
+# 2. Clone and setup
+git clone https://github.com/lucianfialho/dontpiss.git
+cd dontpiss
+python -m venv venv
+venv\Scripts\activate
+pip install --upgrade pip
+pip install -r requirements-windows.txt
+
+# 3. Run wizard (does everything!)
+python setup_wizard.py
+```
+
+Done! The wizard will:
+- ✅ Test camera
+- ✅ Download AI models
+- ✅ Help you draw zone around sofa
+- ✅ Choose training mode
+- ✅ Start monitoring
+
+---
+
+## Option 2: Manual Setup
 
 ## 1. Install Python
 

@@ -17,11 +17,11 @@ def print_header():
 def print_step(step, total, message):
     print(f"[{step}/{total}] {message}")
 
-def test_camera():
+def test_camera(camera_index=0):
     """Test if camera is accessible"""
     try:
         import cv2
-        cap = cv2.VideoCapture(0)
+        cap = cv2.VideoCapture(camera_index)
         if not cap.isOpened():
             return False
         ret, frame = cap.read()
@@ -30,6 +30,49 @@ def test_camera():
     except Exception as e:
         print(f"   Error: {e}")
         return False
+
+def find_cameras():
+    """Find all available cameras"""
+    import cv2
+    available = []
+    for i in range(5):  # Check first 5 camera indices
+        cap = cv2.VideoCapture(i)
+        if cap.isOpened():
+            ret, frame = cap.read()
+            if ret:
+                available.append(i)
+            cap.release()
+    return available
+
+def choose_camera():
+    """Let user choose camera"""
+    print("\n   Searching for cameras...")
+    cameras = find_cameras()
+
+    if len(cameras) == 0:
+        print("   ✗ No cameras found")
+        return None
+
+    if len(cameras) == 1:
+        print(f"   ✓ Found camera at index {cameras[0]}")
+        return cameras[0]
+
+    print(f"\n   Found {len(cameras)} camera(s):")
+    for i in cameras:
+        print(f"   {i}. Camera {i}")
+
+    while True:
+        choice = input(f"\n   Choose camera (0-{max(cameras)}) [default: 0]: ").strip()
+        if not choice:
+            return 0
+        try:
+            idx = int(choice)
+            if idx in cameras:
+                return idx
+            else:
+                print(f"   Camera {idx} not available. Choose from: {cameras}")
+        except ValueError:
+            print("   Invalid input. Enter a number.")
 
 def download_models():
     """Download YOLO models"""
@@ -53,10 +96,25 @@ def check_zone_configured():
             return True
     return False
 
-def run_zone_setup():
+def run_zone_setup(camera_index=0):
     """Run the zone setup script"""
     try:
-        print("\n   Opening camera to configure forbidden zone...")
+        # Save camera index to temp config
+        import json
+        config_file = Path('user_config.json')
+        config = {}
+        if config_file.exists():
+            try:
+                with open(config_file, 'r') as f:
+                    config = json.load(f)
+            except:
+                pass
+
+        config['camera_index'] = camera_index
+        with open(config_file, 'w') as f:
+            json.dump(config, f, indent=2)
+
+        print(f"\n   Opening camera {camera_index} to configure forbidden zone...")
         print("   Instructions:")
         print("   - Click and drag to draw rectangle around sofa")
         print("   - Press 'S' to save")
@@ -140,20 +198,23 @@ def main():
         print("\n   Please run: pip install -r requirements-windows.txt")
         return 1
 
-    # Step 2: Test camera
-    print_step(2, 5, "Testing camera access...")
-    if test_camera():
-        print("   ✓ Camera is working")
-    else:
-        print("   ✗ Camera not accessible")
+    # Step 2: Choose and test camera
+    print_step(2, 5, "Detecting cameras...")
+    camera_index = choose_camera()
+
+    if camera_index is None:
+        print("   ✗ No cameras detected")
         print("\n   Troubleshooting:")
         print("   - Check if camera is connected")
-        print("   - Close other apps using camera")
-        print("   - Try different camera index in config")
+        print("   - Close other apps using camera (Zoom, Teams, etc.)")
+        print("   - Check camera privacy settings in Windows")
 
         choice = input("\n   Continue anyway? (y/N): ").strip().lower()
         if choice != 'y':
             return 1
+        camera_index = 0  # Default fallback
+    else:
+        print(f"   ✓ Using camera {camera_index}")
 
     # Step 3: Download models
     print_step(3, 5, "Downloading YOLO models (if needed)...")
@@ -170,7 +231,7 @@ def main():
         print("   ℹ Zone already configured")
         reconfigure = input("   Reconfigure zone? (y/N): ").strip().lower()
         if reconfigure == 'y':
-            if run_zone_setup():
+            if run_zone_setup(camera_index):
                 print("   ✓ Zone configured")
             else:
                 print("   ✗ Zone setup failed")
@@ -178,7 +239,7 @@ def main():
         else:
             print("   ✓ Using existing zone configuration")
     else:
-        if run_zone_setup():
+        if run_zone_setup(camera_index):
             print("   ✓ Zone configured")
         else:
             print("   ✗ Zone setup cancelled or failed")

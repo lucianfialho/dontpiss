@@ -140,7 +140,7 @@ def quick_setup():
                 print("\n⚠️  Crie pelo menos uma zona!")
                 continue
 
-            # Save zones in src/ directory (where zone_detector.py runs)
+            # Save zones - try multiple locations to avoid permission issues
             config_file = Path(__file__).parent / 'src' / 'zone_config.json'
             config_file_root = Path(__file__).parent / 'zone_config.json'
 
@@ -149,17 +149,39 @@ def quick_setup():
                 'camera_index': camera_index
             }
 
-            # Save in both locations for compatibility
-            with open(config_file, 'w') as f:
-                json.dump(config, f, indent=2)
-            with open(config_file_root, 'w') as f:
-                json.dump(config, f, indent=2)
+            saved_count = 0
+            errors = []
 
-            print(f"\n💾 {len(zones)} zona(s) salva(s)!")
-            print(f"   - {config_file}")
-            print(f"   - {config_file_root}")
-            cv2.destroyAllWindows()
-            return True
+            # Try to save in src/ directory
+            try:
+                config_file.parent.mkdir(parents=True, exist_ok=True)
+                with open(config_file, 'w', encoding='utf-8') as f:
+                    json.dump(config, f, indent=2)
+                print(f"   ✓ Salvo: {config_file}")
+                saved_count += 1
+            except Exception as e:
+                errors.append(f"src/zone_config.json: {e}")
+
+            # Try to save in root directory
+            try:
+                with open(config_file_root, 'w', encoding='utf-8') as f:
+                    json.dump(config, f, indent=2)
+                print(f"   ✓ Salvo: {config_file_root}")
+                saved_count += 1
+            except Exception as e:
+                errors.append(f"zone_config.json: {e}")
+
+            if saved_count > 0:
+                print(f"\n💾 {len(zones)} zona(s) salva(s) em {saved_count} local(is)!")
+                cv2.destroyAllWindows()
+                return True
+            else:
+                print(f"\n❌ Erro ao salvar zonas:")
+                for error in errors:
+                    print(f"   - {error}")
+                print("\n⚠️  Tente rodar como Administrador")
+                cv2.destroyAllWindows()
+                return False
 
     cv2.destroyAllWindows()
     return False

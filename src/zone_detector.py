@@ -99,7 +99,7 @@ class ZoneDetector:
 
         try:
             self.logger.info(f"Loading zones from: {zone_config_file.absolute()}")
-            with open(zone_config_file, 'r') as f:
+            with open(zone_config_file, 'r', encoding='utf-8') as f:
                 zone_config = json.load(f)
                 self.zones = zone_config.get('zones', [])
                 self.camera_index = zone_config.get('camera_index', 0)
@@ -110,9 +110,17 @@ class ZoneDetector:
             for zone in self.zones:
                 self.logger.info(f"  - {zone['name']}: {zone['type']}")
 
+        except PermissionError as e:
+            self.logger.error(f"Permission denied reading zone config: {e}")
+            print(f"\n❌ Erro de permissão ao ler zona: {e}")
+            print("\n⚠️  Solução: Tente rodar como Administrador")
+            print("   Ou mova o projeto para C:\\Users\\SEU_USUARIO\\Documents\\dontpiss")
+            sys.exit(1)
         except Exception as e:
             self.logger.error(f"Failed to load zones: {e}")
             print(f"\n❌ Erro ao carregar zonas: {e}")
+            import traceback
+            traceback.print_exc()
             sys.exit(1)
 
     def load_user_config(self):

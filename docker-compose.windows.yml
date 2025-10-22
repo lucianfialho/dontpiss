@@ -1,0 +1,32 @@
+# Windows-specific override for docker-compose
+# Use: docker-compose -f docker-compose.yml -f docker-compose.windows.yml up
+
+services:
+  dontpiss:
+    # Remove devices mapping (not supported on Windows/WSL2)
+    devices: []
+    # Use host network mode for camera access
+    network_mode: bridge
+    environment:
+      - CAMERA_SOURCE=0
+      - TRAINING_MODE=standard
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./analytics:/app/analytics
+      - ./sounds:/app/sounds
+      - ./zone_config.json:/app/zone_config.json:ro
+      - ./src/zone_config.json:/app/src/zone_config.json:ro
+    restart: unless-stopped
+
+  zone-setup:
+    devices: []
+    network_mode: bridge
+    environment:
+      - CAMERA_SOURCE=0
+    volumes:
+      - ./zone_config.json:/app/zone_config.json
+      - ./src/zone_config.json:/app/src/zone_config.json
+    command: python quick_zone_setup.py
+    profiles:
+      - setup

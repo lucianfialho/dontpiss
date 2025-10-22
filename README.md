@@ -21,9 +21,34 @@ DontPiss is an AI-powered dog training system that uses computer vision to detec
 
 ## 🚀 Quick Start
 
-### ⭐ Recommended: Docker (Easiest)
+### Windows Users 🪟
 
-No Python setup needed! Works on any machine.
+**Use native Python (Docker has camera issues on Windows):**
+
+```powershell
+# 1. Install Python 3.11 from python.org (check "Add to PATH")
+# 2. Clone and setup
+git clone https://github.com/lucianfialho/dontpiss.git
+cd dontpiss
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements-minimal.txt
+
+# 3. Setup zone
+python quick_zone_setup.py
+
+# 4. Start training
+cd src
+python zone_detector.py --mode standard
+```
+
+**📖 See [WINDOWS-QUICKSTART.md](WINDOWS-QUICKSTART.md) for detailed Windows guide.**
+
+---
+
+### macOS/Linux Users 🐧🍎
+
+**Recommended: Docker**
 
 ```bash
 # 1. Install Docker Desktop
@@ -43,7 +68,7 @@ docker-compose up -d
 docker-compose logs -f
 ```
 
-**📖 See [DOCKER.md](DOCKER.md) for complete guide (Windows, macOS, Linux).**
+**📖 See [DOCKER.md](DOCKER.md) for complete Docker guide.**
 
 ---
 
@@ -219,7 +244,9 @@ dontpiss/
 
 ## 📖 Documentation
 
-- [🐳 Docker Guide](DOCKER.md) - **Recommended setup** (Windows, macOS, Linux)
+- [🪟 Windows Quick Start](WINDOWS-QUICKSTART.md) - **5-minute setup for Windows**
+- [🪟 Windows Complete Guide](WINDOWS.md) - Full Windows installation and troubleshooting
+- [🐳 Docker Guide](DOCKER.md) - **Recommended for macOS/Linux**
 - [🔧 Installation Guide](INSTALL.md) - Manual Python installation and troubleshooting
 - [🚫 Zone Detection Guide](README_ZONE.md) - How zone detection works
 - [🎓 Training Guide](README_TRAINING.md) - Complete training strategies

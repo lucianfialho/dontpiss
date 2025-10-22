@@ -1,0 +1,29 @@
+# Core dependencies
+opencv-python>=4.8.0
+numpy>=1.24.0
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Hugging Face and transformers
+transformers>=4.35.0
+huggingface-hub>=0.19.0
+
+# YOLO alternative (ultralytics)
+ultralytics>=8.0.0
+
+# Notifications
+plyer>=2.1.0
+
+# Utilities
+Pillow>=10.0.0
+matplotlib>=3.7.0
+tqdm>=4.65.0
+pyyaml>=6.0
+
+# Analytics and visualization
+pandas>=2.0.0
+seaborn>=0.12.0
+
+# Optional: for advanced pose estimation
+# deeplabcut (uncomment if using DeepLabCut)
+# tensorflow>=2.10.0
